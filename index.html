@@ -43,7 +43,6 @@
         .search-box { width: 100%; padding: 12px 20px; border-radius: 12px; border: 2px solid transparent; background: var(--admin-bg); color: var(--text-main); font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); outline: none; transition: 0.2s; box-sizing: border-box; }
         .search-box:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
 
-        /* หมวดหมู่ (Category Filter) */
         .category-container { max-width: 1000px; margin: 0 auto 20px auto; display: flex; gap: 8px; flex-wrap: wrap; }
         .cat-btn { background: var(--admin-bg); color: var(--text-main); border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: 0.2s; }
         .cat-btn.active, .cat-btn:hover { background: #1a73e8; color: white; border-color: #1a73e8; }
@@ -159,13 +158,14 @@
 </div>
 
 <script>
-    // ⚠️ ใส่ Web App URL ที่ได้จากการ Deploy Google Apps Script ที่นี่
+    // ⚠️ ใส่ Web App URL ที่ได้จากการ Deploy Google Apps Script ลงในเครื่องหมายคำพูดด้านล่าง
     const API_URL = 'https://script.google.com/macros/s/AKfycbw0v5zQKn6xymcTPGxh6P6J_rS0aYjVVxCe3VcwC-f1YnY_etWXqJ8Ryx6ni8tHnkk/exec';
 
     let globalData = [];
+    let globalCategories = [];
     let isAdmin = false;
     let currentUsername = '';
-    let currentPassword = ''; // เก็บไว้ใช้ยืนยันตัวตนเวลาเรียก API หลังบ้าน
+    let currentPassword = ''; 
     let currentCategory = 'ทั้งหมด';
     
     let editingRowId = null;
@@ -183,6 +183,7 @@
             .then(response => {
                 if(response.status === 'success') {
                     globalData = response.data;
+                    globalCategories = response.categories || ['ทั่วไป'];
                     renderCategories();
                     renderUI();
                 } else {
@@ -213,10 +214,10 @@
     }
 
     function renderCategories() {
-        const categories = ['ทั้งหมด', ...new Set(globalData.map(item => item.category || 'ทั่วไป'))];
         const container = document.getElementById('category-filter');
-        container.innerHTML = '';
-        categories.forEach(cat => {
+        container.innerHTML = `<button class="cat-btn ${currentCategory === 'ทั้งหมด' ? 'active' : ''}" onclick="filterByCategory('ทั้งหมด')">ทั้งหมด</button>`;
+        
+        globalCategories.forEach(cat => {
             container.innerHTML += `<button class="cat-btn ${currentCategory === cat ? 'active' : ''}" onclick="filterByCategory('${cat}')">${cat}</button>`;
         });
     }
@@ -328,6 +329,10 @@
     }
 
     function createInlineFormHTML(id, data) {
+        let catOptions = globalCategories.map(c => 
+            `<option value="${c}" ${data.category === c ? 'selected' : ''}>${c}</option>`
+        ).join('');
+
         return `
             <tr class="editing-row">
                 <td style="text-align:center;">
@@ -338,7 +343,11 @@
                 </td>
                 <td><input type="text" id="inline-name" class="inline-input" value="${data.name || ''}" placeholder="ชื่อโปรแกรม"></td>
                 <td><input type="text" id="inline-url" class="inline-input" value="${data.url || ''}" placeholder="https://..."></td>
-                <td><input type="text" id="inline-cat" class="inline-input" value="${data.category || 'ทั่วไป'}" placeholder="หมวดหมู่"></td>
+                <td>
+                    <select id="inline-cat" class="inline-input">
+                        ${catOptions}
+                    </select>
+                </td>
                 <td><input type="text" id="inline-desc" class="inline-input" value="${data.desc || ''}" placeholder="รายละเอียด"></td>
                 <td style="text-align: center;">
                     <button style="background:#10b981; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:4px; font-weight:bold;" onclick="saveInline('${id}')">💾</button>
@@ -350,7 +359,7 @@
     function startAddInline() {
         if(editingRowId) return Swal.fire({icon: 'warning', title: 'กรุณาบันทึกข้อมูลที่ค้างอยู่ก่อน'});
         editingRowId = 'new';
-        editDataTemp = { name: '', url: '', icon: '', desc: '', category: 'ทั่วไป' };
+        editDataTemp = { name: '', url: '', icon: '', desc: '', category: globalCategories[0] || 'ทั่วไป' };
         renderAdminTable();
     }
 
