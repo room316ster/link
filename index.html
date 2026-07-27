@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รวมลิงก์โปรแกรม</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --bg-overlay: rgba(255, 255, 255, 0.85);
+            --text-main: #1f2937;
+            --text-sub: #4b5563;
+            --header-text: #1e3a8a;
+            --card-border: rgba(0,0,0,0.03);
+            --admin-bg: white;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --row-edit-bg: #f8fafc;
+        }
+
+        [data-theme="dark"] {
+            --bg-overlay: rgba(15, 23, 42, 0.9);
+            --text-main: #f8fafc;
+            --text-sub: #cbd5e1;
+            --header-text: #60a5fa;
+            --card-border: rgba(255,255,255,0.1);
+            --admin-bg: #1e293b;
+            --input-bg: #0f172a;
+            --input-border: #334155;
+            --row-edit-bg: #334155;
+        }
+
+        body { font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background: url('https://lh3.googleusercontent.com/d/1XWS0C_Z7ungD3BFk_TZ76TqOjbs9VvZc') no-repeat center center fixed; background-color: #f0f2f5; background-size: cover; display: flex; flex-direction: column; min-height: 100vh; transition: 0.3s; }
+        .overlay { background-color: var(--bg-overlay); flex: 1; padding: 20px; padding-bottom: 80px; transition: 0.3s; }
+        
+        .hero-banner { max-width: 1000px; margin: 0 auto 20px auto; border-radius: 20px; background: url('https://lh3.googleusercontent.com/d/1XWS0C_Z7ungD3BFk_TZ76TqOjbs9VvZc') no-repeat center center; background-size: cover; box-shadow: 0 8px 20px rgba(0,0,0,0.15); overflow: hidden; }
+        .hero-content { background: linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); padding: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        [data-theme="dark"] .hero-content { background: linear-gradient(90deg, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.5) 60%, rgba(15, 23, 42, 0) 100%); }
+        .hero-content h1 { color: var(--header-text); font-size: 28px; margin: 0; }
+        .action-buttons { display: flex; gap: 8px; align-items: center; flex-wrap: wrap;}
+
+        .search-container { max-width: 1000px; margin: 0 auto 15px auto; width: 100%; }
+        .search-box { width: 100%; padding: 12px 20px; border-radius: 12px; border: 2px solid transparent; background: var(--admin-bg); color: var(--text-main); font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); outline: none; transition: 0.2s; box-sizing: border-box; }
+        .search-box:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+
+        /* หมวดหมู่ (Category Filter) */
+        .category-container { max-width: 1000px; margin: 0 auto 20px auto; display: flex; gap: 8px; flex-wrap: wrap; }
+        .cat-btn { background: var(--admin-bg); color: var(--text-main); border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .cat-btn.active, .cat-btn:hover { background: #1a73e8; color: white; border-color: #1a73e8; }
+
+        .btn-theme { background: var(--admin-bg); color: var(--text-main); border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; cursor: pointer; font-size: 20px; }
+        .btn-shortcut { background: #10b981; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-login { background: #1a73e8; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-add { background: #8b5cf6; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 20px; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+        
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 1000px; margin: auto; }
+        .card { border-radius: 16px; padding: 25px 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-decoration: none; color: var(--text-main); transition: transform 0.2s, box-shadow 0.2s; border: 1px solid var(--card-border); position: relative; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        [data-theme="dark"] .card { background-color: #1e293b !important; } 
+        .icon { font-size: 50px; margin-bottom: 12px; }
+        .title { font-size: 19px; font-weight: bold; margin-bottom: 5px; }
+        .desc { font-size: 14px; color: var(--text-sub); }
+        .clicks-badge { position: absolute; top: 10px; right: 12px; font-size: 12px; background: rgba(0,0,0,0.06); padding: 2px 8px; border-radius: 10px; color: var(--text-sub); }
+
+        .admin-panel { max-width: 1000px; margin: auto; display: none; background: var(--admin-bg); padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: var(--text-main); }
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--card-border); vertical-align: middle; }
+        th { background-color: #1a73e8; color: white; font-weight: bold; }
+        
+        .inline-input { width: 100%; padding: 8px 10px; border: 1px solid var(--input-border); border-radius: 6px; background: var(--input-bg); color: var(--text-main); font-family: 'Sarabun', sans-serif; box-sizing: border-box; outline: none; transition: 0.2s; }
+        .inline-input:focus { border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
+        .editing-row { background-color: var(--row-edit-bg); }
+
+        .footer { background: #1e293b; color: white; text-align: center; padding: 15px; position: fixed; bottom: 0; width: 100%; font-size: 14px; z-index: 100; }
+
+        .emoji-picker-box { 
+            position: absolute; background: var(--admin-bg); border: 1px solid var(--input-border); 
+            border-radius: 10px; padding: 10px; width: 280px; max-height: 220px; overflow-y: auto; 
+            display: none; grid-template-columns: repeat(6, 1fr); gap: 5px; 
+            z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+        }
+        .emoji-picker-box::-webkit-scrollbar { width: 6px; }
+        .emoji-picker-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .emoji-picker-box span { font-size: 24px; cursor: pointer; text-align: center; padding: 5px 0; border-radius: 8px; transition: 0.2s; }
+        .emoji-picker-box span:hover { background: var(--row-edit-bg); transform: scale(1.1); }
+    </style>
+</head>
+<body data-theme="light">
+
+<div class="overlay">
+    <div class="hero-banner">
+        <div class="hero-content">
+            <h1 id="page-title">📌 รวมลิงก์โปรแกรม</h1>
+            <div class="action-buttons">
+                <button class="btn-theme" onclick="toggleTheme()" title="เปลี่ยนธีม">🌓</button>
+                <button id="btn-shortcut" class="btn-shortcut" onclick="showInstallGuide()">📱 นำเว็บลงมือถือ</button>
+                <button id="btn-login" class="btn-login" onclick="showLogin()">🔐 Admin Login</button>
+                <button id="btn-profile" class="btn-login" style="display:none; background:#0ea5e9;" onclick="showProfile()">👤 โปรไฟล์</button>
+                <button id="btn-logout" class="btn-logout" style="display:none;" onclick="logout()">🚪 ออกจากระบบ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-container" id="search-area">
+        <input type="text" class="search-box" id="search-input" placeholder="พิมพ์เพื่อค้นหาโปรแกรม..." onkeyup="filterLinks()">
+    </div>
+
+    <!-- แถบหมวดหมู่ -->
+    <div class="category-container" id="category-filter"></div>
+
+    <div id="public-view" class="container">
+        <div style="text-align:center; width:100%; font-size: 18px; color: #666;">กำลังโหลดข้อมูล...⏳</div>
+    </div>
+
+    <div id="admin-view" class="admin-panel">
+        <button class="btn-add" onclick="startAddInline()">➕ เพิ่มลิงก์ใหม่</button>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 70px; text-align:center;">ไอคอน</th>
+                        <th style="width: 18%;">ชื่อเว็บ</th>
+                        <th style="width: 25%;">URL</th>
+                        <th style="width: 15%;">หมวดหมู่</th>
+                        <th style="width: 20%;">รายละเอียด</th>
+                        <th style="width: 150px; text-align: center;">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="footer">พัฒนาโดย นายวีระยุทธ ประชุมรักษ์</div>
+
+<div id="emoji-picker" class="emoji-picker-box">
+    <span onclick="selectEmoji('🌐')">🌐</span><span onclick="selectEmoji('📱')">📱</span>
+    <span onclick="selectEmoji('💻')">💻</span><span onclick="selectEmoji('🔍')">🔍</span>
+    <span onclick="selectEmoji('⚙️')">⚙️</span><span onclick="selectEmoji('🚀')">🚀</span>
+    <span onclick="selectEmoji('⚖️')">⚖️</span><span onclick="selectEmoji('🏛️')">🏛️</span>
+    <span onclick="selectEmoji('📜')">📜</span><span onclick="selectEmoji('👨‍⚖️')">👨‍⚖️</span>
+    <span onclick="selectEmoji('📁')">📁</span><span onclick="selectEmoji('🛡️')">🛡️</span>
+    <span onclick="selectEmoji('📝')">📝</span><span onclick="selectEmoji('📊')">📊</span>
+    <span onclick="selectEmoji('📧')">📧</span><span onclick="selectEmoji('📅')">📅</span>
+    <span onclick="selectEmoji('💼')">💼</span><span onclick="selectEmoji('📌')">📌</span>
+    <span onclick="selectEmoji('🗑️')">🗑️</span><span onclick="selectEmoji('💡')">💡</span>
+    <span onclick="selectEmoji('🔑')">🔑</span><span onclick="selectEmoji('🔒')">🔒</span>
+    <span onclick="selectEmoji('💬')">💬</span><span onclick="selectEmoji('📞')">📞</span>
+    <span onclick="selectEmoji('📷')">📷</span><span onclick="selectEmoji('🎵')">🎵</span>
+    <span onclick="selectEmoji('🎬')">🎬</span><span onclick="selectEmoji('🎨')">🎨</span>
+    <span onclick="selectEmoji('🛒')">🛒</span><span onclick="selectEmoji('💰')">💰</span>
+    <span onclick="selectEmoji('💳')">💳</span><span onclick="selectEmoji('✈️')">✈️</span>
+    <span onclick="selectEmoji('🌍')">🌍</span><span onclick="selectEmoji('⭐')">⭐</span>
+    <span onclick="selectEmoji('❤️')">❤️</span><span onclick="selectEmoji('🔥')">🔥</span>
+    <span onclick="selectEmoji('✅')">✅</span><span onclick="selectEmoji('⚠️')">⚠️</span>
+</div>
+
+<script>
+    // ⚠️ ใส่ Web App URL ที่ได้จากการ Deploy Google Apps Script ที่นี่
+    const API_URL = 'YOUR_GAS_WEB_APP_URL';
+
+    let globalData = [];
+    let isAdmin = false;
+    let currentUsername = '';
+    let currentPassword = ''; // เก็บไว้ใช้ยืนยันตัวตนเวลาเรียก API หลังบ้าน
+    let currentCategory = 'ทั้งหมด';
+    
+    let editingRowId = null;
+    let editDataTemp = {};
+
+    window.onload = function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        loadData();
+    };
+
+    function loadData() {
+        fetch(`${API_URL}?action=getData`)
+            .then(res => res.json())
+            .then(response => {
+                if(response.status === 'success') {
+                    globalData = response.data;
+                    renderCategories();
+                    renderUI();
+                } else {
+                    Swal.fire({icon: 'error', title: 'โหลดข้อมูลไม่สำเร็จ', text: response.message});
+                }
+            })
+            .catch(err => {
+                Swal.fire({icon: 'error', title: 'เกิดข้อผิดพลาดในการเชื่อมต่อ', text: err});
+            });
+    }
+
+    function callApi(payload) {
+        payload.username = currentUsername;
+        payload.password = currentPassword;
+        return fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        }).then(res => res.json());
+    }
+
+    function toggleTheme() {
+        const currentTheme = document.body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        renderPublicCards(); 
+    }
+
+    function renderCategories() {
+        const categories = ['ทั้งหมด', ...new Set(globalData.map(item => item.category || 'ทั่วไป'))];
+        const container = document.getElementById('category-filter');
+        container.innerHTML = '';
+        categories.forEach(cat => {
+            container.innerHTML += `<button class="cat-btn ${currentCategory === cat ? 'active' : ''}" onclick="filterByCategory('${cat}')">${cat}</button>`;
+        });
+    }
+
+    function filterByCategory(cat) {
+        currentCategory = cat;
+        renderCategories();
+        filterLinks();
+    }
+
+    function filterLinks() {
+        const input = document.getElementById('search-input').value.toLowerCase();
+        let filteredData = globalData.filter(item => {
+            const matchText = item.name.toLowerCase().includes(input) || item.desc.toLowerCase().includes(input);
+            const matchCat = currentCategory === 'ทั้งหมด' || item.category === currentCategory;
+            return matchText && matchCat;
+        });
+        renderPublicCards(filteredData);
+    }
+
+    function renderUI() {
+        const publicView = document.getElementById('public-view');
+        const adminView = document.getElementById('admin-view');
+        const btnLogin = document.getElementById('btn-login');
+        const btnProfile = document.getElementById('btn-profile');
+        const btnLogout = document.getElementById('btn-logout');
+        const btnShortcut = document.getElementById('btn-shortcut');
+        const searchArea = document.getElementById('search-area');
+        const catArea = document.getElementById('category-filter');
+
+        if(isAdmin) {
+            publicView.style.display = 'none';
+            searchArea.style.display = 'none';
+            catArea.style.display = 'none';
+            adminView.style.display = 'block';
+            btnLogin.style.display = 'none';
+            btnShortcut.style.display = 'none';
+            btnProfile.style.display = 'inline-block';
+            btnLogout.style.display = 'inline-block';
+            editingRowId = null;
+            renderAdminTable(); 
+        } else {
+            publicView.style.display = 'grid';
+            searchArea.style.display = 'block';
+            catArea.style.display = 'flex';
+            adminView.style.display = 'none';
+            btnLogin.style.display = 'inline-block';
+            btnShortcut.style.display = 'inline-block';
+            btnProfile.style.display = 'none';
+            btnLogout.style.display = 'none';
+            renderPublicCards();
+        }
+    }
+
+    function trackClick(rowNum, url) {
+        fetch(`${API_URL}?action=clickLink&row=${rowNum}`).catch(() => {});
+        window.open(url, '_blank');
+    }
+
+    function renderPublicCards(dataToRender = globalData) {
+        const container = document.getElementById('public-view'); 
+        container.innerHTML = '';
+        const lightColors = ['#e0f2fe', '#f3e8ff', '#dcfce7', '#fef9c3', '#fce7f3', '#e0f7fa', '#ffedd5'];
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+
+        dataToRender.forEach((row, index) => {
+            const bgColor = isDark ? '#1e293b' : lightColors[index % lightColors.length];
+            container.innerHTML += `
+                <div class="card" style="background-color: ${bgColor}; cursor:pointer;" onclick="trackClick(${row.row}, '${row.url}')">
+                    <span class="clicks-badge">👁️ ${row.clicks || 0}</span>
+                    <div class="icon">${row.icon || '🌐'}</div>
+                    <div class="title">${row.name || 'ไม่มีชื่อ'}</div>
+                    <div class="desc">${row.desc || ''}</div>
+                </div>`;
+        });
+        
+        if (dataToRender.length === 0) {
+            container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:#666;">❌ ไม่พบข้อมูลที่ค้นหา</div>';
+        }
+    }
+
+    function renderAdminTable() {
+        const tbody = document.getElementById('admin-table-body'); 
+        tbody.innerHTML = '';
+
+        if (editingRowId === 'new') {
+            tbody.innerHTML += createInlineFormHTML('new', editDataTemp);
+        }
+
+        globalData.forEach((row) => {
+            if (editingRowId === row.row) {
+                tbody.innerHTML += createInlineFormHTML(row.row, row);
+            } else {
+                const urlDisplay = row.url.length > 35 ? row.url.substring(0, 35) + '...' : row.url;
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-size:26px; text-align:center;">${row.icon || ''}</td>
+                        <td style="font-weight:bold; color:var(--text-main);">${row.name}</td>
+                        <td style="color:var(--text-sub); font-size:14px;"><a href="${row.url}" target="_blank" style="color:#3b82f6; text-decoration:none;">${urlDisplay}</a></td>
+                        <td><span style="background:rgba(59,130,246,0.1); color:#3b82f6; padding:3px 8px; border-radius:6px; font-size:13px;">${row.category || 'ทั่วไป'}</span></td>
+                        <td style="color:var(--text-sub);">${row.desc || ''}</td>
+                        <td style="text-align: center;">
+                            <button style="background:#ffc107; color:black; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:4px; font-weight:bold;" onclick="startEditInline(${row.row})">✏️</button>
+                            <button style="background:#dc3545; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;" onclick="deleteLink(${row.row})">🗑️</button>
+                        </td>
+                    </tr>`;
+            }
+        });
+    }
+
+    function createInlineFormHTML(id, data) {
+        return `
+            <tr class="editing-row">
+                <td style="text-align:center;">
+                    <div style="display:flex; align-items:center; justify-content:center; gap:5px;">
+                        <input type="text" id="inline-icon" class="inline-input" value="${data.icon || ''}" placeholder="😀" style="width: 45px; text-align:center; font-size:18px;">
+                        <button onclick="toggleEmojiPicker(event, 'inline-icon')" style="background:none; border:none; font-size:20px; cursor:pointer;" title="เลือก Emoji">➕</button>
+                    </div>
+                </td>
+                <td><input type="text" id="inline-name" class="inline-input" value="${data.name || ''}" placeholder="ชื่อโปรแกรม"></td>
+                <td><input type="text" id="inline-url" class="inline-input" value="${data.url || ''}" placeholder="https://..."></td>
+                <td><input type="text" id="inline-cat" class="inline-input" value="${data.category || 'ทั่วไป'}" placeholder="หมวดหมู่"></td>
+                <td><input type="text" id="inline-desc" class="inline-input" value="${data.desc || ''}" placeholder="รายละเอียด"></td>
+                <td style="text-align: center;">
+                    <button style="background:#10b981; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:4px; font-weight:bold;" onclick="saveInline('${id}')">💾</button>
+                    <button style="background:#64748b; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;" onclick="cancelInline()">❌</button>
+                </td>
+            </tr>`;
+    }
+
+    function startAddInline() {
+        if(editingRowId) return Swal.fire({icon: 'warning', title: 'กรุณาบันทึกข้อมูลที่ค้างอยู่ก่อน'});
+        editingRowId = 'new';
+        editDataTemp = { name: '', url: '', icon: '', desc: '', category: 'ทั่วไป' };
+        renderAdminTable();
+    }
+
+    function startEditInline(rowId) {
+        if(editingRowId) return Swal.fire({icon: 'warning', title: 'กรุณาบันทึกข้อมูลที่ค้างอยู่ก่อน'});
+        editingRowId = rowId;
+        const rowData = globalData.find(r => r.row === rowId);
+        editDataTemp = { ...rowData };
+        renderAdminTable();
+    }
+
+    function cancelInline() {
+        editingRowId = null;
+        document.getElementById('emoji-picker').style.display = 'none';
+        renderAdminTable();
+    }
+
+    function saveInline(rowId) {
+        const name = document.getElementById('inline-name').value; 
+        const url = document.getElementById('inline-url').value;
+        const icon = document.getElementById('inline-icon').value; 
+        const desc = document.getElementById('inline-desc').value;
+        const category = document.getElementById('inline-cat').value;
+
+        if (!name || !url) return Swal.fire({icon: 'warning', title: 'กรุณากรอกชื่อและ URL ให้ครบ'});
+
+        editingRowId = null;
+        document.getElementById('emoji-picker').style.display = 'none';
+
+        Swal.fire({title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
+        
+        const payload = rowId === 'new' 
+            ? { action: 'addLink', name, url, icon, desc, category }
+            : { action: 'updateLink', row: rowId, name, url, icon, desc, category };
+
+        callApi(payload).then(res => {
+            if(res.status === 'success') {
+                reloadAfterSave('บันทึกสำเร็จ!');
+            } else {
+                Swal.fire({icon: 'error', title: 'เกิดข้อผิดพลาด', text: res.message});
+                loadData();
+            }
+        });
+    }
+
+    function deleteLink(rowNum) {
+        if(editingRowId) return Swal.fire({icon: 'warning', title: 'กรุณาบันทึกข้อมูลที่ค้างอยู่ก่อน'});
+        Swal.fire({ title: 'ยืนยันการลบ?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc3545', confirmButtonText: 'ใช่, ลบเลย!' }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({title: 'กำลังลบ...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
+                callApi({ action: 'deleteLink', row: rowNum }).then(res => {
+                    if(res.status === 'success') {
+                        reloadAfterSave('ลบข้อมูลแล้ว!');
+                    } else {
+                        Swal.fire({icon: 'error', title: 'เกิดข้อผิดพลาด', text: res.message});
+                        loadData();
+                    }
+                });
+            }
+        });
+    }
+
+    function reloadAfterSave(msg) { 
+        Swal.fire({icon: 'success', title: msg, timer: 1500, showConfirmButton: false}); 
+        loadData(); 
+    }
+
+    function toggleEmojiPicker(e, targetId) {
+        const picker = document.getElementById('emoji-picker');
+        if (picker.style.display === 'grid' && picker.getAttribute('data-target') === targetId) {
+            picker.style.display = 'none';
+        } else {
+            picker.style.display = 'grid';
+            picker.setAttribute('data-target', targetId);
+            const rect = e.target.getBoundingClientRect();
+            picker.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+            picker.style.left = (rect.left + window.scrollX - 120) + 'px';
+        }
+    }
+
+    function selectEmoji(e) { 
+        const picker = document.getElementById('emoji-picker');
+        const targetId = picker.getAttribute('data-target');
+        if(targetId) document.getElementById(targetId).value = e; 
+        picker.style.display = 'none'; 
+    }
+
+    document.addEventListener('click', function(event) {
+        const picker = document.getElementById('emoji-picker');
+        if (picker.style.display === 'grid' && !picker.contains(event.target) && event.target.innerText !== '➕') {
+            picker.style.display = 'none';
+        }
+    });
+
+    async function showLogin() {
+        const { value: formValues } = await Swal.fire({
+            title: 'เข้าสู่ระบบ',
+            html: '<input id="swal-user" class="swal2-input" placeholder="ชื่อผู้ใช้"><input id="swal-pass" type="password" class="swal2-input" placeholder="รหัสผ่าน">',
+            focusConfirm: false, showCancelButton: true, confirmButtonText: 'Login',
+            preConfirm: () => [document.getElementById('swal-user').value, document.getElementById('swal-pass').value]
+        });
+        if (formValues) {
+            Swal.fire({title: 'กำลังตรวจสอบ...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
+            fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'login', username: formValues[0], password: formValues[1] })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 'success') {
+                    currentUsername = formValues[0];
+                    currentPassword = formValues[1];
+                    isAdmin = true; 
+                    renderUI(); 
+                    Swal.fire({icon: 'success', title: 'ยินดีต้อนรับ', timer: 1500, showConfirmButton: false});
+                } else {
+                    Swal.fire({icon: 'error', title: 'ชื่อผู้ใช้หรือรหัสผ่านผิด!'});
+                }
+            });
+        }
+    }
+
+    async function showProfile() {
+        const { value: formValues } = await Swal.fire({
+            title: '👤 จัดการโปรไฟล์',
+            html: `<input id="p-new-user" class="swal2-input" placeholder="ชื่อผู้ใช้" value="${currentUsername}"><hr><input id="p-old-pass" type="password" class="swal2-input" placeholder="รหัสผ่านเดิม"><input id="p-new-pass" type="password" class="swal2-input" placeholder="รหัสผ่านใหม่">`,
+            showCancelButton: true, confirmButtonText: 'บันทึก',
+            preConfirm: () => [currentUsername, document.getElementById('p-new-user').value, document.getElementById('p-old-pass').value, document.getElementById('p-new-pass').value]
+        });
+        if (formValues) {
+            callApi({
+                action: 'updateProfile',
+                oldUsername: formValues[0],
+                newUsername: formValues[1],
+                oldPassword: formValues[2],
+                newPassword: formValues[3]
+            }).then(res => {
+                if(res.status === 'success') {
+                    Swal.fire({icon: 'success', title: 'สำเร็จ!'}).then(() => { logout(); });
+                } else {
+                    Swal.fire({icon: 'error', title: 'รหัสผ่านเดิมไม่ถูกต้อง!'});
+                }
+            });
+        }
+    }
+
+    function logout() { 
+        isAdmin = false; 
+        currentUsername = '';
+        currentPassword = '';
+        renderUI(); 
+        Swal.fire({icon: 'info', title: 'ออกจากระบบแล้ว', timer: 1500, showConfirmButton: false}); 
+    }
+    
+    function showInstallGuide() { 
+        Swal.fire({ title: '📱 วิธีติดตั้ง', html: 'เปิดเมนูเบราว์เซอร์แล้วเลือก "เพิ่มลงในหน้าจอหลัก" (Add to Home screen) ครับ', icon: 'info' }); 
+    }
+</script>
+</body>
+</html>
