@@ -1,0 +1,21 @@
+{
+  "name": "รวมลิงก์โปรแกรม",
+  "short_name": "รวมลิงก์",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a73e8",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://lh3.googleusercontent.com/d/1XWS0C_Z7ungD3BFk_TZ76TqOjbs9VvZc",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/d/1XWS0C_Z7ungD3BFk_TZ76TqOjbs9VvZc",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
