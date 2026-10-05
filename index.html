@@ -3,128 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a73e8">
+    <meta name="description" content="ศูนย์รวมลิงก์ระบบและโปรแกรมสำหรับองค์กร">
     <title>รวมลิงก์โปรแกรม</title>
+    
+    <!-- PWA Manifest & Fonts -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
-            --bg-overlay: rgba(255, 255, 255, 0.85);
-            --text-main: #1f2937;
-            --text-sub: #4b5563;
+            --bg-overlay: rgba(255, 255, 255, 0.90);
+            --text-main: #1e293b;
+            --text-sub: #64748b;
             --header-text: #1e3a8a;
-            --card-border: rgba(0,0,0,0.03);
-            --admin-bg: white;
+            --card-border: rgba(0,0,0,0.06);
+            --admin-bg: #ffffff;
             --input-bg: #ffffff;
             --input-border: #cbd5e1;
-            --row-edit-bg: #f8fafc;
+            --row-edit-bg: #f1f5f9;
+            --badge-bg: rgba(0,0,0,0.05);
         }
 
         [data-theme="dark"] {
-            --bg-overlay: rgba(15, 23, 42, 0.9);
+            --bg-overlay: rgba(15, 23, 42, 0.94);
             --text-main: #f8fafc;
-            --text-sub: #cbd5e1;
+            --text-sub: #94a3b8;
             --header-text: #60a5fa;
-            --card-border: rgba(255,255,255,0.1);
+            --card-border: rgba(255,255,255,0.08);
             --admin-bg: #1e293b;
             --input-bg: #0f172a;
             --input-border: #334155;
             --row-edit-bg: #334155;
+            --badge-bg: rgba(255,255,255,0.1);
         }
 
-        body { font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background: url('https://lh3.googleusercontent.com/d/1XWS0C_Z7ungD3BFk_TZ76TqOjbs9VvZc') no-repeat center center fixed; background-color: #f0f2f5; background-size: cover; display: flex; flex-direction: column; min-height: 100vh; transition: 0.3s; }
-        .overlay { background-color: var(--bg-overlay); flex: 1; padding: 20px; padding-bottom: 80px; transition: 0.3s; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background: #f0f2f5 url('https://lh3.googleusercontent.com/d/1XWS0C_Z7ungD3BFk_TZ76TqOjbs9VvZc') no-repeat center center fixed; 
+            background-size: cover; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+            transition: background 0.3s; 
+        }
+
+        .overlay { 
+            background-color: var(--bg-overlay); 
+            flex: 1; 
+            padding: 20px; 
+            padding-bottom: 90px; 
+            transition: background-color 0.3s; 
+        }
         
-        .hero-banner { max-width: 1000px; margin: 0 auto 20px auto; border-radius: 20px; background: url('https://lh3.googleusercontent.com/d/1XWS0C_Z7ungD3BFk_TZ76TqOjbs9VvZc') no-repeat center center; background-size: cover; box-shadow: 0 8px 20px rgba(0,0,0,0.15); overflow: hidden; }
-        .hero-content { background: linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%); padding: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        [data-theme="dark"] .hero-content { background: linear-gradient(90deg, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.5) 60%, rgba(15, 23, 42, 0) 100%); }
-        .hero-content h1 { color: var(--header-text); font-size: 28px; margin: 0; }
-        .action-buttons { display: flex; gap: 8px; align-items: center; flex-wrap: wrap;}
-
-        .search-container { max-width: 1000px; margin: 0 auto 15px auto; width: 100%; }
-        .search-box { width: 100%; padding: 12px 20px; border-radius: 12px; border: 2px solid transparent; background: var(--admin-bg); color: var(--text-main); font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); outline: none; transition: 0.2s; box-sizing: border-box; }
-        .search-box:focus { border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
-
-        .category-container { max-width: 1000px; margin: 0 auto 20px auto; display: flex; gap: 8px; flex-wrap: wrap; }
-        .cat-btn { background: var(--admin-bg); color: var(--text-main); border: 1px solid var(--card-border); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: 0.2s; }
-        .cat-btn.active, .cat-btn:hover { background: #1a73e8; color: white; border-color: #1a73e8; }
-
-        .btn-theme { background: var(--admin-bg); color: var(--text-main); border: 1px solid var(--card-border); padding: 10px; border-radius: 8px; cursor: pointer; font-size: 20px; }
-        .btn-shortcut { background: #10b981; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-login { background: #1a73e8; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-logout { background: #dc3545; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-add { background: #8b5cf6; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 20px; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+        .hero-banner { 
+            max-width: 1050px; 
+            margin: 0 auto 20px auto; 
+            border-radius: 20px; 
+            background: url('https://lh3.googleusercontent.com/d/1XWS0C_Z7ungD3BFk_TZ76TqOjbs9VvZc') no-repeat center center; 
+            background-size: cover; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            overflow: hidden; 
+        }
         
-        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 1000px; margin: auto; }
-        .card { border-radius: 16px; padding: 25px 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-decoration: none; color: var(--text-main); transition: transform 0.2s, box-shadow 0.2s; border: 1px solid var(--card-border); position: relative; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        [data-theme="dark"] .card { background-color: #1e293b !important; } 
-        .icon { font-size: 50px; margin-bottom: 12px; }
-        .title { font-size: 19px; font-weight: bold; margin-bottom: 5px; }
-        .desc { font-size: 14px; color: var(--text-sub); }
-        .clicks-badge { position: absolute; top: 10px; right: 12px; font-size: 12px; background: rgba(0,0,0,0.06); padding: 2px 8px; border-radius: 10px; color: var(--text-sub); }
+        .hero-content { 
+            background: linear-gradient(90deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0.2) 100%); 
+            padding: 24px 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+        }
 
-        .admin-panel { max-width: 1000px; margin: auto; display: none; background: var(--admin-bg); padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); color: var(--text-main); }
+        [data-theme="dark"] .hero-content { 
+            background: linear-gradient(90deg, rgba(15, 23, 42, 0.94) 0%, rgba(15, 23, 42, 0.75) 60%, rgba(15, 23, 42, 0.3) 100%); 
+        }
+
+        .hero-content h1 { 
+            color: var(--header-text); 
+            font-size: 26px; 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+
+        .action-buttons { 
+            display: flex; 
+            gap: 8px; 
+            align-items: center; 
+            flex-wrap: wrap; 
+        }
+
+        /* Control Bar (Search + Sort + Count) */
+        .controls-wrapper {
+            max-width: 1050px;
+            margin: 0 auto 15px auto;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-box-wrapper {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box { 
+            width: 100%; 
+            padding: 12px 18px 12px 42px; 
+            border-radius: 12px; 
+            border: 2px solid transparent; 
+            background: var(--admin-bg); 
+            color: var(--text-main); 
+            font-size: 15px; 
+            font-family: 'Sarabun', sans-serif;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04); 
+            outline: none; 
+            transition: 0.2s; 
+        }
+        .search-box:focus { 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15); 
+        }
+        .search-icon-placeholder {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .sort-select {
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            background: var(--admin-bg);
+            color: var(--text-main);
+            font-family: 'Sarabun', sans-serif;
+            font-size: 15px;
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+        }
+
+        /* Categories */
+        .category-container { 
+            max-width: 1050px; 
+            margin: 0 auto 15px auto; 
+            display: flex; 
+            gap: 8px; 
+            flex-wrap: wrap; 
+            align-items: center; 
+        }
+
+        .cat-btn { 
+            background: var(--admin-bg); 
+            color: var(--text-main); 
+            border: 1px solid var(--card-border); 
+            padding: 6px 16px; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            font-size: 14px; 
+            font-family: 'Sarabun', sans-serif;
+            transition: all 0.2s; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03); 
+        }
+        .cat-btn.active, .cat-btn:hover { 
+            background: #1a73e8; 
+            color: white; 
+            border-color: #1a73e8; 
+            transform: translateY(-1px); 
+        }
+
+        .status-bar {
+            max-width: 1050px;
+            margin: 0 auto 15px auto;
+            font-size: 13px;
+            color: var(--text-sub);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn-theme { 
+            background: var(--admin-bg); 
+            color: var(--text-main); 
+            border: 1px solid var(--card-border); 
+            padding: 9px 12px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 18px; 
+            transition: 0.2s; 
+        }
+        .btn-shortcut { background: #10b981; color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Sarabun'; }
+        .btn-login { background: #1a73e8; color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Sarabun'; }
+        .btn-logout { background: #dc3545; color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Sarabun'; }
+        .btn-action { color: white; border: none; padding: 9px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Sarabun'; }
+        
+        /* Grid & Cards */
+        .container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+            gap: 20px; 
+            max-width: 1050px; 
+            margin: auto; 
+        }
+
+        .card { 
+            border-radius: 16px; 
+            padding: 24px 20px; 
+            text-align: center; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            text-decoration: none; 
+            color: var(--text-main); 
+            transition: transform 0.2s, box-shadow 0.2s; 
+            border: 1px solid var(--card-border); 
+            position: relative; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 12px 25px rgba(0,0,0,0.12); 
+        }
+        [data-theme="dark"] .card { 
+            background-color: #1e293b !important; 
+        }
+
+        .icon-wrapper {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        .icon { font-size: 46px; line-height: 1; }
+        .icon-img { width: 44px; height: 44px; border-radius: 10px; object-fit: contain; }
+
+        .title { 
+            font-size: 18px; 
+            font-weight: 700; 
+            margin-bottom: 6px; 
+            color: var(--text-main);
+            word-break: break-word;
+        }
+        .desc { 
+            font-size: 13.5px; 
+            color: var(--text-sub); 
+            line-height: 1.4;
+            word-break: break-word;
+            flex: 1;
+        }
+        .clicks-badge { 
+            position: absolute; 
+            top: 10px; 
+            right: 12px; 
+            font-size: 12px; 
+            background: var(--badge-bg); 
+            padding: 2px 8px; 
+            border-radius: 12px; 
+            color: var(--text-sub); 
+        }
+        .cat-badge {
+            font-size: 11px;
+            background: rgba(59, 130, 246, 0.12);
+            color: #3b82f6;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 10px;
+            align-self: center;
+            font-weight: 600;
+        }
+
+        /* Admin Panel */
+        .admin-panel { 
+            max-width: 1050px; 
+            margin: auto; 
+            display: none; 
+            background: var(--admin-bg); 
+            padding: 24px; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06); 
+            color: var(--text-main); 
+        }
+        .admin-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--card-border); vertical-align: middle; }
-        th { background-color: #1a73e8; color: white; font-weight: bold; }
+        th { background-color: #1a73e8; color: white; font-weight: 600; }
         
-        .inline-input { width: 100%; padding: 8px 10px; border: 1px solid var(--input-border); border-radius: 6px; background: var(--input-bg); color: var(--text-main); font-family: 'Sarabun', sans-serif; box-sizing: border-box; outline: none; transition: 0.2s; }
+        .inline-input { 
+            width: 100%; 
+            padding: 8px 10px; 
+            border: 1px solid var(--input-border); 
+            border-radius: 6px; 
+            background: var(--input-bg); 
+            color: var(--text-main); 
+            font-family: 'Sarabun', sans-serif; 
+            outline: none; 
+            transition: 0.2s; 
+        }
         .inline-input:focus { border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2); }
         .editing-row { background-color: var(--row-edit-bg); }
 
-        .footer { background: #1e293b; color: white; text-align: center; padding: 15px; position: fixed; bottom: 0; width: 100%; font-size: 14px; z-index: 100; }
-
-        .emoji-picker-box { 
-            position: absolute; background: var(--admin-bg); border: 1px solid var(--input-border); 
-            border-radius: 10px; padding: 10px; width: 280px; max-height: 220px; overflow-y: auto; 
-            display: none; grid-template-columns: repeat(6, 1fr); gap: 5px; 
-            z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+        .footer { 
+            background: #0f172a; 
+            color: #94a3b8; 
+            text-align: center; 
+            padding: 14px; 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            font-size: 13.5px; 
+            z-index: 100; 
         }
-        .emoji-picker-box::-webkit-scrollbar { width: 6px; }
-        .emoji-picker-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .emoji-picker-box span { font-size: 24px; cursor: pointer; text-align: center; padding: 5px 0; border-radius: 8px; transition: 0.2s; }
-        .emoji-picker-box span:hover { background: var(--row-edit-bg); transform: scale(1.1); }
+
+        /* Emoji Picker */
+        .emoji-picker-box { 
+            position: absolute; 
+            background: var(--admin-bg); 
+            border: 1px solid var(--input-border); 
+            border-radius: 12px; 
+            padding: 12px; 
+            width: 280px; 
+            max-height: 220px; 
+            overflow-y: auto; 
+            display: none; 
+            grid-template-columns: repeat(6, 1fr); 
+            gap: 6px; 
+            z-index: 9999; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+        }
+        .emoji-picker-box span { 
+            font-size: 24px; 
+            cursor: pointer; 
+            text-align: center; 
+            padding: 4px 0; 
+            border-radius: 6px; 
+            transition: 0.2s; 
+        }
+        .emoji-picker-box span:hover { background: var(--row-edit-bg); transform: scale(1.15); }
     </style>
 </head>
 <body data-theme="light">
 
 <div class="overlay">
+    <!-- Header Banner -->
     <div class="hero-banner">
         <div class="hero-content">
-            <h1 id="page-title">📌 รวมลิงก์โปรแกรม</h1>
+            <h1>📌 <span id="page-title">รวมลิงก์โปรแกรม</span></h1>
             <div class="action-buttons">
-                <button class="btn-theme" onclick="toggleTheme()" title="เปลี่ยนธีม">🌓</button>
+                <button class="btn-theme" onclick="toggleTheme()" title="สลับโหมดมืด/สว่าง">🌓</button>
                 <button id="btn-shortcut" class="btn-shortcut" onclick="showInstallGuide()">📱 นำเว็บลงมือถือ</button>
-                <button id="btn-login" class="btn-login" onclick="showLogin()">🔐 Admin Login</button>
-                <button id="btn-profile" class="btn-login" style="display:none; background:#0ea5e9;" onclick="showProfile()">👤 โปรไฟล์</button>
+                <button id="btn-login" class="btn-login" onclick="showLogin()">🔐 เข้าสู่ระบบ Admin</button>
+                <button id="btn-cat-manage" class="btn-action" style="display:none; background:#8b5cf6;" onclick="showCategoryManager()">📁 หมวดหมู่</button>
+                <button id="btn-profile" class="btn-action" style="display:none; background:#0ea5e9;" onclick="showProfile()">👤 โปรไฟล์</button>
                 <button id="btn-logout" class="btn-logout" style="display:none;" onclick="logout()">🚪 ออกจากระบบ</button>
             </div>
         </div>
     </div>
 
-    <div class="search-container" id="search-area">
-        <input type="text" class="search-box" id="search-input" placeholder="พิมพ์เพื่อค้นหาโปรแกรม..." onkeyup="filterLinks()">
+    <!-- Controls (Search + Sorting) -->
+    <div class="controls-wrapper" id="search-area">
+        <div class="search-box-wrapper">
+            <span class="search-icon-placeholder">🔍</span>
+            <input type="text" class="search-box" id="search-input" placeholder="พิมพ์เพื่อค้นหาโปรแกรม หรือรายละเอียด..." onkeyup="filterLinks()">
+        </div>
+        <select class="sort-select" id="sort-select" onchange="filterLinks()">
+            <option value="default">📌 เรียงตามค่าเริ่มต้น</option>
+            <option value="clicks">🔥 ยอดนิยม (คลิกสูงสุด)</option>
+            <option value="name">🔤 ตามตัวอักษร (A-Z / ก-ฮ)</option>
+        </select>
     </div>
 
-    <!-- แถบหมวดหมู่ -->
+    <!-- Categories Tabs -->
     <div class="category-container" id="category-filter"></div>
 
-    <div id="public-view" class="container">
-        <div style="text-align:center; width:100%; font-size: 18px; color: #666;">กำลังโหลดข้อมูล...⏳</div>
+    <!-- Status / Count info -->
+    <div class="status-bar" id="status-bar">
+        <span id="items-count">กำลังโหลดข้อมูล...</span>
     </div>
 
+    <!-- Public View Cards -->
+    <div id="public-view" class="container">
+        <div style="text-align:center; width:100%; font-size: 18px; color: var(--text-sub); grid-column: 1/-1; padding: 40px;">กำลังโหลดข้อมูล...⏳</div>
+    </div>
+
+    <!-- Admin Panel -->
     <div id="admin-view" class="admin-panel">
-        <button class="btn-add" onclick="startAddInline()">➕ เพิ่มลิงก์ใหม่</button>
+        <div class="admin-toolbar">
+            <button class="btn-action" style="background:#10b981; font-size:15px;" onclick="startAddInline()">➕ เพิ่มลิงก์ใหม่</button>
+            <button class="btn-action" style="background:#6366f1; font-size:15px;" onclick="showCategoryManager()">⚙️ จัดการรายการหมวดหมู่</button>
+        </div>
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
                         <th style="width: 70px; text-align:center;">ไอคอน</th>
-                        <th style="width: 18%;">ชื่อเว็บ</th>
+                        <th style="width: 20%;">ชื่อเว็บ</th>
                         <th style="width: 25%;">URL</th>
                         <th style="width: 15%;">หมวดหมู่</th>
                         <th style="width: 20%;">รายละเอียด</th>
-                        <th style="width: 150px; text-align: center;">จัดการ</th>
+                        <th style="width: 140px; text-align: center;">จัดการ</th>
                     </tr>
                 </thead>
                 <tbody id="admin-table-body"></tbody>
@@ -135,6 +436,7 @@
 
 <div class="footer">พัฒนาโดย นายวีระยุทธ ประชุมรักษ์</div>
 
+<!-- Emoji Picker Modal/Popup -->
 <div id="emoji-picker" class="emoji-picker-box">
     <span onclick="selectEmoji('🌐')">🌐</span><span onclick="selectEmoji('📱')">📱</span>
     <span onclick="selectEmoji('💻')">💻</span><span onclick="selectEmoji('🔍')">🔍</span>
@@ -158,22 +460,63 @@
 </div>
 
 <script>
-    // ⚠️ อัปเดต API URL ของคุณแล้ว
+    // ⚠️ Google Apps Script Web App URL
     const API_URL = 'https://script.google.com/macros/s/AKfycbw0v5zQKn6xymcTPGxh6P6J_rS0aYjVVxCe3VcwC-f1YnY_etWXqJ8Ryx6ni8tHnkk/exec';
 
     let globalData = [];
     let globalCategories = [];
     let isAdmin = false;
+    let adminToken = '';
     let currentUsername = '';
-    let currentPassword = ''; 
     let currentCategory = 'ทั้งหมด';
     
-    let editingRowId = null;
+    let editingItemId = null;
     let editDataTemp = {};
+
+    // 🛡️ ป้องกัน XSS (Cross-Site Scripting)
+    function escapeHTML(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    // 🛡️ ตรวจสอบ URL เพื่อป้องกัน javascript: pseudo-protocol
+    function sanitizeUrl(url) {
+        if (!url) return '#';
+        const trimmed = String(url).trim();
+        if (/^(javascript|data):/i.test(trimmed)) {
+            return '#';
+        }
+        return trimmed;
+    }
+
+    // ดึง Favicon URL อัตโนมัติจาก Domain
+    function getFaviconUrl(url) {
+        try {
+            const domain = new URL(url).hostname;
+            return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+        } catch(e) {
+            return null;
+        }
+    }
 
     window.onload = function() {
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.body.setAttribute('data-theme', savedTheme);
+
+        // ตรวจสอบ Session เดิมที่อาจยังค้างอยู่ใน sessionStorage
+        const savedToken = sessionStorage.getItem('adminToken');
+        const savedUser = sessionStorage.getItem('adminUser');
+        if (savedToken && savedUser) {
+            adminToken = savedToken;
+            currentUsername = savedUser;
+            isAdmin = true;
+        }
+
         loadData();
     };
 
@@ -191,13 +534,13 @@
                 }
             })
             .catch(err => {
-                Swal.fire({icon: 'error', title: 'เกิดข้อผิดพลาดในการเชื่อมต่อ', text: err});
+                Swal.fire({icon: 'error', title: 'เกิดข้อผิดพลาดในการเชื่อมต่อ', text: err.message || err});
             });
     }
 
     function callApi(payload) {
+        payload.token = adminToken;
         payload.username = currentUsername;
-        payload.password = currentPassword;
         return fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -210,16 +553,18 @@
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
         document.body.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
-        renderPublicCards(); 
+        filterLinks();
     }
 
     function renderCategories() {
         const container = document.getElementById('category-filter');
-        container.innerHTML = `<button class="cat-btn ${currentCategory === 'ทั้งหมด' ? 'active' : ''}" onclick="filterByCategory('ทั้งหมด')">ทั้งหมด</button>`;
+        let html = `<button class="cat-btn ${currentCategory === 'ทั้งหมด' ? 'active' : ''}" onclick="filterByCategory('ทั้งหมด')">ทั้งหมด</button>`;
         
         globalCategories.forEach(cat => {
-            container.innerHTML += `<button class="cat-btn ${currentCategory === cat ? 'active' : ''}" onclick="filterByCategory('${cat}')">${cat}</button>`;
+            const safeCat = escapeHTML(cat);
+            html += `<button class="cat-btn ${currentCategory === cat ? 'active' : ''}" onclick="filterByCategory('${safeCat}')">${safeCat}</button>`;
         });
+        container.innerHTML = html;
     }
 
     function filterByCategory(cat) {
@@ -229,13 +574,24 @@
     }
 
     function filterLinks() {
-        const input = document.getElementById('search-input').value.toLowerCase();
-        let filteredData = globalData.filter(item => {
-            const matchText = item.name.toLowerCase().includes(input) || item.desc.toLowerCase().includes(input);
+        const input = document.getElementById('search-input').value.toLowerCase().trim();
+        const sortType = document.getElementById('sort-select').value;
+
+        let filtered = globalData.filter(item => {
+            const matchText = (item.name && item.name.toLowerCase().includes(input)) || 
+                              (item.desc && item.desc.toLowerCase().includes(input));
             const matchCat = currentCategory === 'ทั้งหมด' || item.category === currentCategory;
             return matchText && matchCat;
         });
-        renderPublicCards(filteredData);
+
+        // จัดเรียงข้อมูล (Sorting)
+        if (sortType === 'clicks') {
+            filtered.sort((a, b) => (b.clicks || 0) - (a.clicks || 0));
+        } else if (sortType === 'name') {
+            filtered.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th'));
+        }
+
+        renderPublicCards(filtered);
     }
 
     function renderUI() {
@@ -243,85 +599,123 @@
         const adminView = document.getElementById('admin-view');
         const btnLogin = document.getElementById('btn-login');
         const btnProfile = document.getElementById('btn-profile');
+        const btnCatManage = document.getElementById('btn-cat-manage');
         const btnLogout = document.getElementById('btn-logout');
         const btnShortcut = document.getElementById('btn-shortcut');
         const searchArea = document.getElementById('search-area');
         const catArea = document.getElementById('category-filter');
+        const statusBar = document.getElementById('status-bar');
 
         if(isAdmin) {
             publicView.style.display = 'none';
             searchArea.style.display = 'none';
             catArea.style.display = 'none';
+            statusBar.style.display = 'none';
             adminView.style.display = 'block';
             btnLogin.style.display = 'none';
             btnShortcut.style.display = 'none';
+            btnCatManage.style.display = 'inline-block';
             btnProfile.style.display = 'inline-block';
             btnLogout.style.display = 'inline-block';
-            editingRowId = null;
+            editingItemId = null;
             renderAdminTable(); 
         } else {
             publicView.style.display = 'grid';
-            searchArea.style.display = 'block';
+            searchArea.style.display = 'flex';
             catArea.style.display = 'flex';
+            statusBar.style.display = 'flex';
             adminView.style.display = 'none';
             btnLogin.style.display = 'inline-block';
             btnShortcut.style.display = 'inline-block';
+            btnCatManage.style.display = 'none';
             btnProfile.style.display = 'none';
             btnLogout.style.display = 'none';
-            renderPublicCards();
+            filterLinks();
         }
     }
 
-    function trackClick(rowNum, url) {
-        fetch(`${API_URL}?action=clickLink&row=${rowNum}`).catch(() => {});
-        window.open(url, '_blank');
+    function trackClick(id, url) {
+        // บันทึกคลิกโดยส่ง ID ไปยัง API
+        fetch(`${API_URL}?action=clickLink&id=${encodeURIComponent(id)}`).catch(() => {});
+        window.open(sanitizeUrl(url), '_blank', 'noopener,noreferrer');
     }
 
     function renderPublicCards(dataToRender = globalData) {
         const container = document.getElementById('public-view'); 
+        const itemsCount = document.getElementById('items-count');
         container.innerHTML = '';
-        const lightColors = ['#e0f2fe', '#f3e8ff', '#dcfce7', '#fef9c3', '#fce7f3', '#e0f7fa', '#ffedd5'];
+
+        itemsCount.innerText = `แสดง ${dataToRender.length} จากทั้งหมด ${globalData.length} รายการ`;
+
+        const lightColors = ['#f0f9ff', '#f5f3ff', '#f0fdf4', '#fefce8', '#fdf2f8', '#ecfeff', '#fff7ed'];
         const isDark = document.body.getAttribute('data-theme') === 'dark';
+
+        if (dataToRender.length === 0) {
+            container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:50px 20px; color:var(--text-sub); font-size:16px;">❌ ไม่พบข้อมูลที่ตรงกับคำค้นหา</div>';
+            return;
+        }
 
         dataToRender.forEach((row, index) => {
             const bgColor = isDark ? '#1e293b' : lightColors[index % lightColors.length];
+            const safeName = escapeHTML(row.name || 'ไม่มีชื่อ');
+            const safeDesc = escapeHTML(row.desc || '');
+            const safeCategory = escapeHTML(row.category || 'ทั่วไป');
+            const safeUrl = sanitizeUrl(row.url);
+            const safeId = escapeHTML(row.id);
+
+            // แสดงไอคอน: ตรวจสอบว่าเป็น Image URL หรือ Emoji
+            let iconHtml = '';
+            const isImageUrl = row.icon && (row.icon.startsWith('http://') || row.icon.startsWith('https://'));
+            if (isImageUrl) {
+                iconHtml = `<img src="${escapeHTML(row.icon)}" alt="icon" class="icon-img" onerror="this.src='${getFaviconUrl(row.url)}';">`;
+            } else if (row.icon && row.icon.trim()) {
+                iconHtml = `<span class="icon">${escapeHTML(row.icon)}</span>`;
+            } else {
+                // Fallback อัตโนมัติเป็น Favicon ของเว็บ
+                const favicon = getFaviconUrl(row.url);
+                iconHtml = favicon ? `<img src="${favicon}" alt="favicon" class="icon-img" onerror="this.outerHTML='<span class=\\'icon\\'>🌐</span>'">` : `<span class="icon">🌐</span>`;
+            }
+
             container.innerHTML += `
-                <div class="card" style="background-color: ${bgColor}; cursor:pointer;" onclick="trackClick(${row.row}, '${row.url}')">
+                <div class="card" style="background-color: ${bgColor}; cursor:pointer;" onclick="trackClick('${safeId}', '${safeUrl}')">
                     <span class="clicks-badge">👁️ ${row.clicks || 0}</span>
-                    <div class="icon">${row.icon || '🌐'}</div>
-                    <div class="title">${row.name || 'ไม่มีชื่อ'}</div>
-                    <div class="desc">${row.desc || ''}</div>
+                    <div class="icon-wrapper">${iconHtml}</div>
+                    <div class="title">${safeName}</div>
+                    <div class="desc">${safeDesc}</div>
+                    <div class="cat-badge">${safeCategory}</div>
                 </div>`;
         });
-        
-        if (dataToRender.length === 0) {
-            container.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:#666;">❌ ไม่พบข้อมูลที่ค้นหา</div>';
-        }
     }
 
     function renderAdminTable() {
         const tbody = document.getElementById('admin-table-body'); 
         tbody.innerHTML = '';
 
-        if (editingRowId === 'new') {
+        if (editingItemId === 'new') {
             tbody.innerHTML += createInlineFormHTML('new', editDataTemp);
         }
 
         globalData.forEach((row) => {
-            if (editingRowId === row.row) {
-                tbody.innerHTML += createInlineFormHTML(row.row, row);
+            if (editingItemId === row.id) {
+                tbody.innerHTML += createInlineFormHTML(row.id, row);
             } else {
-                const urlDisplay = row.url.length > 35 ? row.url.substring(0, 35) + '...' : row.url;
+                const safeUrl = sanitizeUrl(row.url);
+                const urlDisplay = row.url.length > 35 ? escapeHTML(row.url.substring(0, 35)) + '...' : escapeHTML(row.url);
+                const safeName = escapeHTML(row.name);
+                const safeDesc = escapeHTML(row.desc || '');
+                const safeCat = escapeHTML(row.category || 'ทั่วไป');
+                const safeId = escapeHTML(row.id);
+
                 tbody.innerHTML += `
                     <tr>
-                        <td style="font-size:26px; text-align:center;">${row.icon || ''}</td>
-                        <td style="font-weight:bold; color:var(--text-main);">${row.name}</td>
-                        <td style="color:var(--text-sub); font-size:14px;"><a href="${row.url}" target="_blank" style="color:#3b82f6; text-decoration:none;">${urlDisplay}</a></td>
-                        <td><span style="background:rgba(59,130,246,0.1); color:#3b82f6; padding:3px 8px; border-radius:6px; font-size:13px;">${row.category || 'ทั่วไป'}</span></td>
-                        <td style="color:var(--text-sub);">${row.desc || ''}</td>
+                        <td style="font-size:24px; text-align:center;">${escapeHTML(row.icon || '🌐')}</td>
+                        <td style="font-weight:600; color:var(--text-main);">${safeName}</td>
+                        <td style="font-size:13.5px;"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="color:#3b82f6; text-decoration:none;">${urlDisplay}</a></td>
+                        <td><span style="background:rgba(59,130,246,0.1); color:#3b82f6; padding:3px 10px; border-radius:6px; font-size:13px; font-weight:600;">${safeCat}</span></td>
+                        <td style="color:var(--text-sub); font-size:13.5px;">${safeDesc}</td>
                         <td style="text-align: center;">
-                            <button style="background:#ffc107; color:black; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:4px; font-weight:bold;" onclick="startEditInline(${row.row})">✏️</button>
-                            <button style="background:#dc3545; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;" onclick="deleteLink(${row.row})">🗑️</button>
+                            <button style="background:#ffc107; color:black; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:4px; font-weight:600;" onclick="startEditInline('${safeId}')" title="แก้ไข">✏️</button>
+                            <button style="background:#dc3545; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:600;" onclick="deleteLink('${safeId}')" title="ลบ">🗑️</button>
                         </td>
                     </tr>`;
             }
@@ -330,70 +724,70 @@
 
     function createInlineFormHTML(id, data) {
         let catOptions = globalCategories.map(c => 
-            `<option value="${c}" ${data.category === c ? 'selected' : ''}>${c}</option>`
+            `<option value="${escapeHTML(c)}" ${data.category === c ? 'selected' : ''}>${escapeHTML(c)}</option>`
         ).join('');
 
         return `
             <tr class="editing-row">
                 <td style="text-align:center;">
-                    <div style="display:flex; align-items:center; justify-content:center; gap:5px;">
-                        <input type="text" id="inline-icon" class="inline-input" value="${data.icon || ''}" placeholder="😀" style="width: 45px; text-align:center; font-size:18px;">
-                        <button onclick="toggleEmojiPicker(event, 'inline-icon')" style="background:none; border:none; font-size:20px; cursor:pointer;" title="เลือก Emoji">➕</button>
+                    <div style="display:flex; align-items:center; justify-content:center; gap:4px;">
+                        <input type="text" id="inline-icon" class="inline-input" value="${escapeHTML(data.icon || '')}" placeholder="🌐" style="width: 45px; text-align:center; font-size:16px;">
+                        <button onclick="toggleEmojiPicker(event, 'inline-icon')" style="background:none; border:none; font-size:18px; cursor:pointer;" title="เลือก Emoji">➕</button>
                     </div>
                 </td>
-                <td><input type="text" id="inline-name" class="inline-input" value="${data.name || ''}" placeholder="ชื่อโปรแกรม"></td>
-                <td><input type="text" id="inline-url" class="inline-input" value="${data.url || ''}" placeholder="https://..."></td>
+                <td><input type="text" id="inline-name" class="inline-input" value="${escapeHTML(data.name || '')}" placeholder="ชื่อโปรแกรม"></td>
+                <td><input type="text" id="inline-url" class="inline-input" value="${escapeHTML(data.url || '')}" placeholder="https://..."></td>
                 <td>
                     <select id="inline-cat" class="inline-input">
                         ${catOptions}
                     </select>
                 </td>
-                <td><input type="text" id="inline-desc" class="inline-input" value="${data.desc || ''}" placeholder="รายละเอียด"></td>
+                <td><input type="text" id="inline-desc" class="inline-input" value="${escapeHTML(data.desc || '')}" placeholder="รายละเอียด"></td>
                 <td style="text-align: center;">
-                    <button style="background:#10b981; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:4px; font-weight:bold;" onclick="saveInline('${id}')">💾</button>
-                    <button style="background:#64748b; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;" onclick="cancelInline()">❌</button>
+                    <button style="background:#10b981; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:4px; font-weight:600;" onclick="saveInline('${escapeHTML(id)}')">💾</button>
+                    <button style="background:#64748b; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:600;" onclick="cancelInline()">❌</button>
                 </td>
             </tr>`;
     }
 
     function startAddInline() {
-        if(editingRowId) return Swal.fire({icon: 'warning', title: 'กรุณาบันทึกข้อมูลที่ค้างอยู่ก่อน'});
-        editingRowId = 'new';
+        if(editingItemId) return Swal.fire({icon: 'warning', title: 'กรุณาบันทึกข้อมูลที่ค้างอยู่ก่อน'});
+        editingItemId = 'new';
         editDataTemp = { name: '', url: '', icon: '', desc: '', category: globalCategories[0] || 'ทั่วไป' };
         renderAdminTable();
     }
 
-    function startEditInline(rowId) {
-        if(editingRowId) return Swal.fire({icon: 'warning', title: 'กรุณาบันทึกข้อมูลที่ค้างอยู่ก่อน'});
-        editingRowId = rowId;
-        const rowData = globalData.find(r => r.row === rowId);
-        editDataTemp = { ...rowData };
+    function startEditInline(id) {
+        if(editingItemId) return Swal.fire({icon: 'warning', title: 'กรุณาบันทึกข้อมูลที่ค้างอยู่ก่อน'});
+        editingItemId = id;
+        const rowData = globalData.find(r => r.id === id);
+        editDataTemp = { ...(rowData || {}) };
         renderAdminTable();
     }
 
     function cancelInline() {
-        editingRowId = null;
+        editingItemId = null;
         document.getElementById('emoji-picker').style.display = 'none';
         renderAdminTable();
     }
 
-    function saveInline(rowId) {
-        const name = document.getElementById('inline-name').value; 
-        const url = document.getElementById('inline-url').value;
-        const icon = document.getElementById('inline-icon').value; 
-        const desc = document.getElementById('inline-desc').value;
+    function saveInline(itemId) {
+        const name = document.getElementById('inline-name').value.trim(); 
+        const url = document.getElementById('inline-url').value.trim();
+        const icon = document.getElementById('inline-icon').value.trim(); 
+        const desc = document.getElementById('inline-desc').value.trim();
         const category = document.getElementById('inline-cat').value;
 
-        if (!name || !url) return Swal.fire({icon: 'warning', title: 'กรุณากรอกชื่อและ URL ให้ครบ'});
+        if (!name || !url) return Swal.fire({icon: 'warning', title: 'กรุณากรอกชื่อและ URL ให้ครบถ้วน'});
 
-        editingRowId = null;
+        editingItemId = null;
         document.getElementById('emoji-picker').style.display = 'none';
 
         Swal.fire({title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
         
-        const payload = rowId === 'new' 
+        const payload = itemId === 'new' 
             ? { action: 'addLink', name, url, icon, desc, category }
-            : { action: 'updateLink', row: rowId, name, url, icon, desc, category };
+            : { action: 'updateLink', id: itemId, name, url, icon, desc, category };
 
         callApi(payload).then(res => {
             if(res.status === 'success') {
@@ -402,20 +796,98 @@
                 Swal.fire({icon: 'error', title: 'เกิดข้อผิดพลาด', text: res.message});
                 loadData();
             }
+        }).catch(err => {
+            Swal.fire({icon: 'error', title: 'เกิดข้อผิดพลาด', text: err.message || err});
         });
     }
 
-    function deleteLink(rowNum) {
-        if(editingRowId) return Swal.fire({icon: 'warning', title: 'กรุณาบันทึกข้อมูลที่ค้างอยู่ก่อน'});
-        Swal.fire({ title: 'ยืนยันการลบ?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc3545', confirmButtonText: 'ใช่, ลบเลย!' }).then((result) => {
+    function deleteLink(id) {
+        if(editingItemId) return Swal.fire({icon: 'warning', title: 'กรุณาบันทึกข้อมูลที่ค้างอยู่ก่อน'});
+        Swal.fire({ 
+            title: 'ยืนยันการลบ?', 
+            text: 'รายการนี้จะถูกลบออกจากฐานข้อมูลอย่างถาวร', 
+            icon: 'warning', 
+            showCancelButton: true, 
+            confirmButtonColor: '#dc3545', 
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'ใช่, ลบเลย!',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
             if (result.isConfirmed) {
                 Swal.fire({title: 'กำลังลบ...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
-                callApi({ action: 'deleteLink', row: rowNum }).then(res => {
+                callApi({ action: 'deleteLink', id: id }).then(res => {
                     if(res.status === 'success') {
                         reloadAfterSave('ลบข้อมูลแล้ว!');
                     } else {
                         Swal.fire({icon: 'error', title: 'เกิดข้อผิดพลาด', text: res.message});
                         loadData();
+                    }
+                }).catch(err => {
+                    Swal.fire({icon: 'error', title: 'เกิดข้อผิดพลาด', text: err.message || err});
+                });
+            }
+        });
+    }
+
+    // จัดการหมวดหมู่ (Category Management)
+    function showCategoryManager() {
+        let catListHtml = globalCategories.map(c => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-bottom:1px solid #e2e8f0;">
+                <span>${escapeHTML(c)}</span>
+                ${c !== 'ทั่วไป' ? `<button onclick="deleteCategory('${escapeHTML(c)}')" style="background:#dc3545; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">ลบ</button>` : '<span style="color:#94a3b8; font-size:12px;">(ค่าเริ่มต้น)</span>'}
+            </div>
+        `).join('');
+
+        Swal.fire({
+            title: '📁 จัดการหมวดหมู่',
+            html: `
+                <div style="text-align:left; max-height:220px; overflow-y:auto; margin-bottom:15px; border:1px solid #cbd5e1; border-radius:8px;">
+                    ${catListHtml}
+                </div>
+                <input id="swal-new-cat" class="swal2-input" placeholder="พิมพ์ชื่อหมวดหมู่ใหม่..." style="margin-top:0;">
+            `,
+            showCancelButton: true,
+            confirmButtonText: '➕ เพิ่มหมวดหมู่',
+            cancelButtonText: 'ปิด',
+            preConfirm: () => {
+                const val = document.getElementById('swal-new-cat').value.trim();
+                if (!val) {
+                    Swal.showValidationMessage('กรุณากรอกชื่อหมวดหมู่');
+                    return false;
+                }
+                return val;
+            }
+        }).then((result) => {
+            if (result.isConfirmed && result.value) {
+                Swal.fire({title: 'กำลังเพิ่มหมวดหมู่...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
+                callApi({ action: 'addCategory', categoryName: result.value }).then(res => {
+                    if (res.status === 'success') {
+                        reloadAfterSave('เพิ่มหมวดหมู่แล้ว!');
+                    } else {
+                        Swal.fire({icon: 'error', title: 'ไม่สำเร็จ', text: res.message});
+                    }
+                });
+            }
+        });
+    }
+
+    function deleteCategory(catName) {
+        Swal.fire({
+            title: `ลบหมวดหมู่ "${catName}"?`,
+            text: 'ลิงก์ที่อยู่ในหมวดหมู่นี้จะไม่ถูกลบ แต่จะยังคงอยู่',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'ลบ',
+            cancelButtonText: 'ยกเลิก'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({title: 'กำลังลบหมวดหมู่...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
+                callApi({ action: 'deleteCategory', categoryName: catName }).then(res => {
+                    if (res.status === 'success') {
+                        reloadAfterSave('ลบหมวดหมู่แล้ว!');
+                    } else {
+                        Swal.fire({icon: 'error', title: 'ไม่สำเร็จ', text: res.message});
                     }
                 });
             }
@@ -456,11 +928,23 @@
 
     async function showLogin() {
         const { value: formValues } = await Swal.fire({
-            title: 'เข้าสู่ระบบ',
+            title: 'เข้าสู่ระบบ Admin',
             html: '<input id="swal-user" class="swal2-input" placeholder="ชื่อผู้ใช้"><input id="swal-pass" type="password" class="swal2-input" placeholder="รหัสผ่าน">',
-            focusConfirm: false, showCancelButton: true, confirmButtonText: 'Login',
-            preConfirm: () => [document.getElementById('swal-user').value, document.getElementById('swal-pass').value]
+            focusConfirm: false, 
+            showCancelButton: true, 
+            confirmButtonText: 'เข้าสู่ระบบ',
+            cancelButtonText: 'ยกเลิก',
+            preConfirm: () => {
+                const u = document.getElementById('swal-user').value.trim();
+                const p = document.getElementById('swal-pass').value;
+                if (!u || !p) {
+                    Swal.showValidationMessage('กรุณากรอกทั้งชื่อผู้ใช้และรหัสผ่าน');
+                    return false;
+                }
+                return [u, p];
+            }
         });
+
         if (formValues) {
             Swal.fire({title: 'กำลังตรวจสอบ...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
             fetch(API_URL, {
@@ -471,14 +955,19 @@
             .then(res => res.json())
             .then(res => {
                 if(res.status === 'success') {
-                    currentUsername = formValues[0];
-                    currentPassword = formValues[1];
+                    adminToken = res.token;
+                    currentUsername = res.username || formValues[0];
+                    sessionStorage.setItem('adminToken', adminToken);
+                    sessionStorage.setItem('adminUser', currentUsername);
                     isAdmin = true; 
                     renderUI(); 
-                    Swal.fire({icon: 'success', title: 'ยินดีต้อนรับ', timer: 1500, showConfirmButton: false});
+                    Swal.fire({icon: 'success', title: 'ยินดีต้อนรับเข้าสู่ระบบ', timer: 1500, showConfirmButton: false});
                 } else {
-                    Swal.fire({icon: 'error', title: 'ชื่อผู้ใช้หรือรหัสผ่านผิด!'});
+                    Swal.fire({icon: 'error', title: 'เข้าสู่ระบบไม่สำเร็จ', text: res.message || 'ชื่อผู้ใช้หรือรหัสผ่านผิด'});
                 }
+            })
+            .catch(err => {
+                Swal.fire({icon: 'error', title: 'เกิดข้อผิดพลาดในการเชื่อมต่อ', text: err.message || err});
             });
         }
     }
@@ -486,11 +975,29 @@
     async function showProfile() {
         const { value: formValues } = await Swal.fire({
             title: '👤 จัดการโปรไฟล์',
-            html: `<input id="p-new-user" class="swal2-input" placeholder="ชื่อผู้ใช้" value="${currentUsername}"><hr><input id="p-old-pass" type="password" class="swal2-input" placeholder="รหัสผ่านเดิม"><input id="p-new-pass" type="password" class="swal2-input" placeholder="รหัสผ่านใหม่">`,
-            showCancelButton: true, confirmButtonText: 'บันทึก',
-            preConfirm: () => [currentUsername, document.getElementById('p-new-user').value, document.getElementById('p-old-pass').value, document.getElementById('p-new-pass').value]
+            html: `
+                <div style="text-align:left; font-size:14px; margin-bottom:10px; color:var(--text-sub);">
+                    ชื่อผู้ใช้ปัจจุบัน: <b>${escapeHTML(currentUsername)}</b>
+                </div>
+                <input id="p-new-user" class="swal2-input" placeholder="ชื่อผู้ใช้ใหม่ (เว้นว่างหากไม่เปลี่ยน)" value="${escapeHTML(currentUsername)}">
+                <input id="p-old-pass" type="password" class="swal2-input" placeholder="รหัสผ่านเดิม (จำเป็น)">
+                <input id="p-new-pass" type="password" class="swal2-input" placeholder="รหัสผ่านใหม่ (เว้นว่างหากไม่เปลี่ยน)">
+            `,
+            showCancelButton: true, 
+            confirmButtonText: 'บันทึก',
+            cancelButtonText: 'ยกเลิก',
+            preConfirm: () => {
+                const oldPass = document.getElementById('p-old-pass').value;
+                if (!oldPass) {
+                    Swal.showValidationMessage('กรุณากรอกรหัสผ่านเดิมเพื่อยืนยัน');
+                    return false;
+                }
+                return [currentUsername, document.getElementById('p-new-user').value.trim(), oldPass, document.getElementById('p-new-pass').value];
+            }
         });
+
         if (formValues) {
+            Swal.fire({title: 'กำลังอัปเดตโปรไฟล์...', allowOutsideClick: false, didOpen: () => {Swal.showLoading()}});
             callApi({
                 action: 'updateProfile',
                 oldUsername: formValues[0],
@@ -499,9 +1006,9 @@
                 newPassword: formValues[3]
             }).then(res => {
                 if(res.status === 'success') {
-                    Swal.fire({icon: 'success', title: 'สำเร็จ!'}).then(() => { logout(); });
+                    Swal.fire({icon: 'success', title: 'เปลี่ยนข้อมูลสำเร็จ!', text: 'กรุณาเข้าสู่ระบบใหม่อีกครั้ง'}).then(() => { logout(); });
                 } else {
-                    Swal.fire({icon: 'error', title: 'รหัสผ่านเดิมไม่ถูกต้อง!'});
+                    Swal.fire({icon: 'error', title: 'ไม่สำเร็จ', text: res.message || 'รหัสผ่านเดิมไม่ถูกต้อง!'});
                 }
             });
         }
@@ -509,14 +1016,28 @@
 
     function logout() { 
         isAdmin = false; 
+        adminToken = '';
         currentUsername = '';
-        currentPassword = '';
+        sessionStorage.removeItem('adminToken');
+        sessionStorage.removeItem('adminUser');
         renderUI(); 
         Swal.fire({icon: 'info', title: 'ออกจากระบบแล้ว', timer: 1500, showConfirmButton: false}); 
     }
     
     function showInstallGuide() { 
-        Swal.fire({ title: '📱 วิธีติดตั้ง', html: 'เปิดเมนูเบราว์เซอร์แล้วเลือก "เพิ่มลงในหน้าจอหลัก" (Add to Home screen) ครับ', icon: 'info' }); 
+        Swal.fire({ 
+            title: '📱 วิธีติดตั้งลงหน้าจอมือถือ', 
+            html: `
+                <div style="text-align:left; font-size:15px; line-height:1.6; color:#475569;">
+                    <b>สำหรับ Android (Chrome):</b><br>
+                    แตะที่ปุ่มจุดไข่ปลา <b>⋮</b> มุมขวาบน แล้วเลือก <i>"เพิ่มลงในหน้าจอหลัก"</i> (Add to Home screen)<br><br>
+                    <b>สำหรับ iPhone/iPad (Safari):</b><br>
+                    แตะปุ่มแชร์ <b>📤</b> ด้านล่าง แล้วเลือก <i>"เพิ่มไปยังหน้าจอโฮม"</i> (Add to Home Screen)
+                </div>
+            `, 
+            icon: 'info',
+            confirmButtonText: 'เข้าใจแล้ว'
+        }); 
     }
 </script>
 </body>
